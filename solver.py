@@ -1,5 +1,5 @@
 import argparse
-
+import random
 """
 ======================================================================
   Complete the following function.
@@ -19,8 +19,45 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    return []
-
+    outputs=[]
+    sat=[]
+    output=wizards
+    # while int(len(sat)*.1)<num_constraints:
+    #     random.shuffle(output)
+    #     if output not in outputs:
+    #         outputs.append(output)
+    #         for cond in sat:
+    #             if inRange(cond,output):
+    #                 break
+    #         for cond in constraints:
+    #             if cond not in sat:
+    #                 if inRange(cond,output):
+    #                     break
+    #                 sat.append(cond)
+    # print(output)
+    for i in range(10000):
+        random.shuffle(output)
+        outputs.append(output)
+        sat.append(numSat(constraints,output)) 
+    print(max(sat))
+    return outputs[sat.index(max(sat))]
+def numSat(constraints,output):
+    satisfied=0
+    for cond in constraints:
+            if not inRange(cond,output):
+                satisfied+=1
+    return satisfied
+def inRange(cond,output):
+    first=output.index(cond[0])
+    second=output.index(cond[1])
+    subject=output.index(cond[2])
+    if first<second:
+        if subject in range(first,second):
+            return True
+    if second<first:
+        if subject in range(second,first):
+            return True
+    return False
 """
 ======================================================================
    No need to change any code below this line
