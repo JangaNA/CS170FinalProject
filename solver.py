@@ -1,5 +1,6 @@
 import argparse
 import random
+from multiprocessing.dummy import Pool as ThreadPool 
 """
 ======================================================================
   Complete the following function.
@@ -19,28 +20,27 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    outputs=[]
-    sat=[]
-    output=wizards
-    # while int(len(sat)*.1)<num_constraints:
-    #     random.shuffle(output)
-    #     if output not in outputs:
-    #         outputs.append(output)
-    #         for cond in sat:
-    #             if inRange(cond,output):
-    #                 break
-    #         for cond in constraints:
-    #             if cond not in sat:
-    #                 if inRange(cond,output):
-    #                     break
-    #                 sat.append(cond)
-    # print(output)
-    for i in range(10000):
-        random.shuffle(output)
-        outputs.append(output)
-        sat.append(numSat(constraints,output)) 
-    print(max(sat))
-    return outputs[sat.index(max(sat))]
+    def solve_helper(n):
+        outputs=[]
+        sat=[]
+        output=wizards
+        for i in range(1000000):
+            output=random.sample(output,len(wizards))
+            if output not in outputs:
+                outputs.append(output)
+                sat.append(numSat(constraints,output)) 
+        return (max(sat),outputs[sat.index(max(sat))])
+    pool = ThreadPool(80)
+    results=solve_helper(1)
+    results = pool.map(solve_helper,[i for i in range(100)])
+    print(results)
+    maximum=0
+    output=[]
+    for elem in results:
+        if elem[0]>maximum:
+            maximum=elem[0]
+            output=elem[2]
+    return output
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
