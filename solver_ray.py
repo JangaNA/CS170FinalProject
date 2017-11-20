@@ -48,17 +48,24 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         return {}
 
     result = helper(curr_assignment, 0)
+    print("am i high")
     if len(result) == 0:
         print("No Ordering Possible")
         return None
     else:
-        result_sort = sorted(result, key=lambda k: d[k][0])
-        return [elem[0] for elem in result_sort]
+	print("found an ordering")
+	num_cons = 0
+	for constraint in constraints:
+	    if satisfies_constraints(result, constraints):
+		num_cons += 1
+	print("number cons satisfied", num_cons)
+        result_sort = sorted(result, key=result.get)
+        return result_sort
 
 def satisfies_constraints(ordering, constraints):
     for constraint in constraints:
-        first, second, third = ordering[costraint[0]], ordering[constraint[1]], ordering[constraint[2]]
-        if first == -1 or second == -1 or third = -1:
+        first, second, third = ordering[constraint[0]], ordering[constraint[1]], ordering[constraint[2]]
+        if first == -1 or second == -1 or third == -1:
             return True
         else:
             return not ((first < second and second < third) or (first > second and second > third))
