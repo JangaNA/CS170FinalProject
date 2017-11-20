@@ -53,15 +53,33 @@ def solve(num_wizards, num_constraints, wizards, constraints):
         print("No Ordering Possible")
         return None
     else:
-	print("found an ordering")
-	num_cons = 0
-	for constraint in constraints:
-	    if satisfies_constraints(result, constraints):
-		num_cons += 1
-	print("number cons satisfied", num_cons)
+    	print("found an ordering")
+    	num_cons = 0
+    	for constraint in constraints:
+    	    if satisfies_constraints(result, constraints):
+    		num_cons += 1
+    	print("number cons satisfied", num_cons)
         result_sort = sorted(result, key=result.get)
+        print(numSat(constraints,result_sort))
         return result_sort
-
+def numSat(constraints,output):
+    satisfied=0
+    for cond in constraints:
+         if not inRange(cond,output):
+          satisfied+=1
+    return satisfied
+#returns true if 3rd element between first two
+def inRange(cond,output):
+    first=output.index(cond[0])
+    second=output.index(cond[1])
+    subject=output.index(cond[2])
+    if first<second:
+     if subject in range(first,second):
+         return True
+    if second<first:
+     if subject in range(second,first):
+         return True
+    return False
 def satisfies_constraints(ordering, constraints):
     for constraint in constraints:
         first, second, third = ordering[constraint[0]], ordering[constraint[1]], ordering[constraint[2]]

@@ -9,6 +9,7 @@ import itertools
   Complete the following function.
 ======================================================================
 """
+
 def solve(num_wizards, num_constraints, wizards, constraints):
     """
     Write your algorithm here.
@@ -27,30 +28,35 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     lst=[]
     for i in findsubsets(wizards,3):
         lst.append(list(i))
-    #returns false if a condition is not met
-    def checkCons(constraints,output):
+    lst=[x for x in lst if checkCons(constraints,x)]
+    # lst=[x for x in lst if checkCons(constraints,x)]
+    print(len(lst))
+    counter=3
+    while counter<=6:
+        newlst=[]
+        for elem in lst:
+            for elemtoadd in lst:
+                if not contains(elem,elemtoadd) and checkCons(constraints,elem+elemtoadd):
+                    newlst.append(elem+elemtoadd)
+        lst=newlst
+        counter+=3
+    print(lst[0])
+    return lst[0]
+#return true if anything in second is in first
+def contains(first,second):
+    for i in second:
+        if i in first:
+            return True
+    return False
+def findsubsets(S,m):
+        return set(itertools.permutations(S, m))
+#returns false if a condition is not met
+def checkCons(constraints,output):
         for cond in constraints:
             if cond[0] in output and cond[1] in output and cond[2] in output: 
                 if inRange(cond,output):
                     return False
         return True
-    lst=[x for x in lst if checkCons(constraints,x)]
-    # lst=[x for x in lst if checkCons(constraints,x)]
-    print(len(lst))
-    counter=3
-    newlst=[]
-    while counter<=4:
-        for elem in lst:
-            for w in wizards:
-                if w not in elem and checkCons(constraints, elem+[w]):
-                    newlst.append(elem+[w])
-        lst=newlst
-        counter+=1
-    print(numSat(lst[0]))
-    return lst[0]
-
-    # finds best ordering in a random sample
-    
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
