@@ -2,6 +2,8 @@ import argparse
 import random
 import threading
 from multiprocessing.dummy import Pool as ThreadPool 
+import itertools
+
 """
 ======================================================================
   Complete the following function.
@@ -20,58 +22,42 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
      An array of wizard names in the ordering your algorithm returns
     """
-    def all_perms(elements):
-        if len(elements) <=1:
-            yield elements
-        else:
-            for perm in all_perms(elements[1:]):
-                for i in range(len(elements)):
-                    yield perm[:i] + elements[0:1] + perm[i:]
+    def findsubsets(S,m):
+        return set(itertools.permutations(S, m))
+    lst=[]
+    for i in findsubsets(wizards,3):
+        lst.append(list(i))
+    #returns false if a condition is not met
+    def checkCons(constraints,output):
+        for cond in constraints:
+            if cond[0] in output and cond[1] in output and cond[2] in output: 
+                if inRange(cond,output):
+                    return False
+        return True
+    lst=[x for x in lst if checkCons(constraints,x)]
+    # lst=[x for x in lst if checkCons(constraints,x)]
+    print(len(lst))
+    counter=3
+    newlst=[]
+    while counter<=4:
+        for elem in lst:
+            for w in wizards:
+                if w not in elem and checkCons(constraints, elem+[w]):
+                    newlst.append(elem+[w])
+        lst=newlst
+        counter+=1
+    print(numSat(lst[0]))
+    return lst[0]
 
-    perms=all_perms(wizards)
     # finds best ordering in a random sample
-    final=[]
-    def solve_helper():
-        outputs=[]
-        sat=[]
-        output=wizards
-        for i in range(1000):
-            output=random.sample(output,len(wizards))
-            if output not in outputs:
-                outputs.append(output)
-                sat.append(numSat(constraints,output)) 
-        final.append([max(sat),outputs[sat.index(max(sat))]])
-
-    #mulithreading
-    # numThreads = 10
-    # threadList=[]
-    # print("Starting...\n")
-    # for i in range(numThreads):
-    #     t=threading.Thread(target=solve_helper,args=(1,))
-    #     t.start()
-    #     threadList.append(t)
-    # print("\nThread Count: "+str(threading.activeCount()))
-    # print("Exiting...\n")
-
-    #knave
-    for i in range(100):
-        solve_helper()
-
-    # #finds best in final
-    maxsat=0
-    output=[]
-    for elem in final:
-        if elem[0]>maxsat:
-            maxsat=elem[0]
-            output=elem[1]
-    print(maxsat,output)
-    return output
+    
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
          if not inRange(cond,output):
           satisfied+=1
     return satisfied
+#returns true if 3rd element between first two
 def inRange(cond,output):
     first=output.index(cond[0])
     second=output.index(cond[1])
