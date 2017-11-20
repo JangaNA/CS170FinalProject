@@ -1,5 +1,10 @@
-input20-0 (421/500): Oisin Daragh Paris Ruben Lianne Skylar Mckenna Wesley Curt Joni Carla Pam Dominick Neal Conner Amari Gene Chase Janette Ayesha
-input20-1 (168/200): Martin Mindy Matthew Juan Marty Bobbie Ethel Trinity Nevaeh Alfonso Roberto Holden Lillian Darragh Alfie Elyza Angus Emerald Lonnie Daphne 
-input20-2 (319/380): Brooklyn Vihan Krista Guillermo Kirsten Kylee Kay Caitlyn Javier Kim Cora Jocelyn Alexis Carlos Johnny Cristian Sidney Bert Cindy Janet 
+input20-0 (500/500): Oisin Daragh Paris Ruben Skylar Lianne Mckenna Wesley Pam Joni Gene Dominick Ayesha Carla Chase Curt Amari Janette Conner Neal
+input20-1 (200/200): Martin Bobbie Matthew Mindy Trinity Juan Ethel Nevaeh Angus Lillian Alfonso Daphne Elyza Darragh Alfie Marty Emerald Roberto Lonnie Holden 
+input20-2 (380/380): Janet Javier Krista Bert Sidney Cristian Cindy Alexis Carlos Jocelyn Johnny Guillermo Cora Kim Caitlyn Kay Kylee Kirsten Brooklyn Vihan 
 input20-3 (36/36): Debra Faith Emma Caroline Tamara Ron Zoey Rylie Aubrey Jonah Amir Kiera Logan Gregg Brayan Marquis Prince Angel Adan Joselyn
-input20-4 (160/187): Tiana Whitney Wilson Yvaine Carissa Molly Gwendolyn Ayanna Kelli Katelynn Shawn Nickolas Duke Luther Anne Terrence Kiley Beau Petar Mario 
+input20-4 (187/187): Tiana Wilson Carissa Molly Yvaine Shawn Terrence Nickolas Katelynn Beau Gwendolyn Duke Ayanna Kelli Luther Anne Whitney Kiley Petar Mario 
+input20-5 (384/384): Perla Gustavo Cian Pandora Deidre Vihan Caitlyn Rashan Bruce Susanne Marcella Dane Sterling Alvin Shawna Lara Maritza Kathryn Zoey Leslie
+input20-6 (500/500): Isaiah Liza Angel Corbin Marissa Arianna Hugh Mickey Michaela Diego Mariah Uriel Erika Jason Vijay Stacy Brad Al Tahlia Callie 
+input20-7 (400/400): Kristi Dennis Jordyn Xaviera Brenda Brad Carrie Lisa Maggie Kierra Amy Raven Beatrice Peyton Daren Deirdre Juanita Angelo Maximus Adrianna
+input20-8 (300/300): Perry Emiliano Wyatt Alejandra Linda Anna Dante Aden Michael Andrea Bobbie Sharon Kieran Jeannine Dee Megan Brandon Elliott Cheri Kendrick 
+input20-9 (498/498): Lonnie Archie Robin Derek Iris Tatiana Finley Michaela Hunter Madisyn Irma Alex Nishka Moises Abel Lester Cam Todd Drew Manuel
