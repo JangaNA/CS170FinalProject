@@ -2,6 +2,7 @@ import argparse
 #my own imports
 import time
 import itertools
+import random
 
 """
 ======================================================================
@@ -27,9 +28,37 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     print("hello")
     end = time.time()
     print("time taken",end - start)
-    initial_assignment = shuffle(wizards)
-    
-    return []
+    random.shuffle(wizards)
+    assignment = wizards
+    scores = {}
+    loop_counter = 0
+    prev_max = 0
+    while not numSat(constraints, assignment) == len(constraints):
+	print("numSat", numSat(constraints, assignment))
+	loop_counter += 1
+ 	if loop_counter % 10 == 0:
+	    print("loops",loop_counter)
+	    print("time taken", time.time()-start)
+	
+	for i in range(len(wizards)):
+	    for j in range(len(wizards)):
+	        if not i == j:
+		    new_list = assignment[:]
+		    temp = new_list[i]
+		    new_list[i] = new_list[j]
+		    new_list[j] = temp
+		    score = numSat(constraints,new_list)
+	            scores[(i,j)] = score
+	max_score = max(scores, key=scores.get)
+    	if max_score == prev_max:
+	    print("RESHUFFLING")
+	    random.shuffle(assignment)
+	prev_max = max_score
+	temp = assignment[max_score[0]]
+	assignment[max_score[0]] = assignment[max_score[1]]
+	assignment[max_score[1]] = temp
+    print("Solved BITCH! numSat:", numSat(constraints, assignment))
+    return assignment
 
 def numSat(constraints,output):
     satisfied=0

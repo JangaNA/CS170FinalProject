@@ -8,7 +8,6 @@ import itertools
   Complete the following function.
 ======================================================================
 """
-
 def solve(num_wizards, num_constraints, wizards, constraints):
     """
     Write your algorithm here.
@@ -27,27 +26,40 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     print("hello")
     end = time.time()
     print("time taken",end - start)
+	
+
+    def count_calls(fn):
+    	def _counting(*args, **kwargs):
+            _counting.calls += 1
+            return fn(*args, **kwargs)
+        _counting.calls = 0
+        return _counting
 
     not_assigned = set(wizards)
     curr_spot_assigning = 0
     curr_assignment = {}
     for wizard in wizards:
         curr_assignment[wizard] = -1
-
-    def helper(ordering, curr_index):
-        if curr_index == len(wizards) - 1:
+    
+    @count_calls
+    def helper(ordering, curr_index, remaining):
+	if helper.calls % 1000 == 0:
+	    print("number of timmes called", helper.calls)
+	    print("time elapsed", time.time() - start)
+	if curr_index == len(wizards) - 1:
             return ordering
-        for wizard in not_assigned:
+        for wizard in remaining:
             ordering[wizard] = curr_index
-            if satisfies_constraints(ordering, constraints):
-                result = helper(ordering, curr_index + 1)
-            else:
-                continue
-            if len(result) == len(wizards):
-                return result
+	    if satisfies_constraints(ordering, constraints):    
+		new_remaining = remaining.copy()
+		new_remaining.remove(wizard)
+	        result = helper(ordering.copy(), curr_index + 1, new_remaining)
+		if len(result) == len(wizards):
+                    return result
+	    ordering[wizard] = -1
         return {}
-
-    result = helper(curr_assignment, 0)
+    helper.num_calls = 0
+    result = helper(curr_assignment, 0, not_assigned)
     print("am i high")
     if len(result) == 0:
         print("No Ordering Possible")
@@ -65,8 +77,12 @@ def solve(num_wizards, num_constraints, wizards, constraints):
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
-         if not inRange(cond,output):
-          satisfied+=1
+        first, second, third = cond[0], cond[1], cond[2]
+	if cond[0] == -1 or cond[1] == -1 or cond[2] == -1:
+	    satisfied+=1
+	    continue	 
+        if not inRange(cond,output):
+            satisfied+=1
     return satisfied
 #returns true if 3rd element between first two
 def inRange(cond,output):
@@ -81,12 +97,15 @@ def inRange(cond,output):
          return True
     return False
 def satisfies_constraints(ordering, constraints):
+    num_sat = 0
     for constraint in constraints:
         first, second, third = ordering[constraint[0]], ordering[constraint[1]], ordering[constraint[2]]
         if first == -1 or second == -1 or third == -1:
-            return True
+            num_sat += 1
         else:
-            return not ((first < second and second < third) or (first > second and second > third))
+            if not ((first < third and third < second) or (third < first and second < third)):
+		num_sat += 1
+    return num_sat == len(constraints)
 
 """
 ======================================================================
