@@ -30,8 +30,8 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     scores = {}
     loop_counter = 0
     prev_max = 0
-    while not numSat(constraints, assignment) == len(constraints):
-        print("numSat", numSat(constraints, assignment))
+    while not numSat(constraints, assignment,0) == len(constraints):
+        print("numSat", numSat(constraints, assignment, 0))
         loop_counter += 1
         if loop_counter % 10 == 0:
             print("loops",loop_counter)
@@ -42,17 +42,20 @@ def solve(num_wizards, num_constraints, wizards, constraints):
 	#for constraint in unsatisfied:
 	#    wizUnsat.add(constraint[0])
 	#print("num wixUnsat", len(wizUnsat))
+	max_sat = 0
         for i in range(len(wizards)):
             for j in range(len(wizards)):
                 if (i != j) and ((j,i) not in scores):
                     temp = assignment[i]
                     assignment[i] = assignment[j]
                     assignment[j] = temp
-                    score = numSat(constraints,assignment)
+                    score = numSat(constraints,assignment,max_sat)
                     scores[(i,j)] = score
 		    temp = assignment[i]
                     assignment[i] = assignment[j]
                     assignment[j] = temp
+		    if scores[(i,j)] > max_sat:
+			max_sat = score
         max_score_swap = max(scores, key=scores.get)
         if max_score_swap == prev_max:
             print("RESHUFFLING")
@@ -72,11 +75,15 @@ def unsatisfiedConstraints(constraints, output):
 	    unsatisfied.append(cond)
     return unsatisfied
 
-def numSat(constraints,output):
+def numSat(constraints,output,currMax):
     satisfied=0
+    remaining=len(constraints)
     for cond in constraints:
-         if not inRange(cond,output):
-          satisfied+=1
+        if satisfied + remaining < currMax:
+	    return 0
+        if not inRange(cond,output):
+            satisfied+=1
+	remaining += 1
     return satisfied
 #returns true if 3rd element between first two
 def inRange(cond,output):
