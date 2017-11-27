@@ -1,7 +1,7 @@
 import argparse
 #my own imports
 import time
-import itertools
+from simanneal import Annealer
 import random
 
 """
@@ -9,7 +9,6 @@ import random
   Complete the following function.
 ======================================================================
 """
-
 def solve(num_wizards, num_constraints, wizards, constraints):
     """
     Write your algorithm here.
@@ -23,43 +22,23 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    print("starting time")
-    start = time.time()
-    print("hello")
-    end = time.time()
-    print("time taken",end - start)
-    random.shuffle(wizards)
-    assignment = wizards
-    scores = {}
-    loop_counter = 0
-    prev_max = 0
-    while not numSat(constraints, assignment) == len(constraints):
-        print("numSat", numSat(constraints, assignment))
-        loop_counter += 1
-        if loop_counter % 10 == 0:
-            print("loops",loop_counter)
-            print("time taken", time.time()-start)
-        
-        for i in range(len(wizards)):
-            for j in range(len(wizards)):
-                if not i == j:
-                    new_list = assignment[:]
-                    temp = new_list[i]
-                    new_list[i] = new_list[j]
-                    new_list[j] = temp
-                    score = numSat(constraints,new_list)
-                    scores[(i,j)] = score
-        max_score = max(scores, key=scores.get)
-        if max_score == prev_max:
-            print("RESHUFFLING")
-            random.shuffle(assignment)
-        prev_max = max_score
-        temp = assignment[max_score[0]]
-        assignment[max_score[0]] = assignment[max_score[1]]
-        assignment[max_score[1]] = temp
-    print("Solved BITCH! numSat:", numSat(constraints, assignment))
-    return assignment
-
+    class WizardProblem(Annealer):
+        def __init__(self, state):
+            super(WizardProblem, self).__init__(state)
+        def move(self):
+            a = random.randint(0, num_wizards-1)
+            b = random.randint(0, num_wizards-1)
+            self.state[a], self.state[b] = self.state[b], self.state[a]
+        def energy(self):
+            return num_constraints-numSat(constraints,self.state)
+    init_state=wizards#find_best_rand(10000)
+    wp=WizardProblem(init_state)
+    auto_schedule=wp.auto(minutes=10)
+    wp.set_schedule(auto_schedule)
+    wp.copy_strategy="slice"
+    state,e= wp.anneal()
+    print(numSat(constraints,state))
+    return state
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
@@ -78,13 +57,6 @@ def inRange(cond,output):
      if subject in range(second,first):
          return True
     return False
-def satisfies_constraints(ordering, constraints):
-    for constraint in constraints:
-        first, second, third = ordering[constraint[0]], ordering[constraint[1]], ordering[constraint[2]]
-        if first == -1 or second == -1 or third == -1:
-            return True
-        else:
-            return not ((first < second and second < third) or (first > second and second > third))
 
 """
 ======================================================================
