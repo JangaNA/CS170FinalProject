@@ -1,14 +1,16 @@
 import argparse
 #my own imports
 import time
-from simanneal import Annealer
+import itertools
 import random
+import numpy as np
 
 """
 ======================================================================
   Complete the following function.
 ======================================================================
 """
+
 def solve(num_wizards, num_constraints, wizards, constraints):
     """
     Write your algorithm here.
@@ -22,23 +24,46 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    class WizardProblem(Annealer):
-        def __init__(self, state):
-            super(WizardProblem, self).__init__(state)
-        def move(self):
-            a = random.randint(0, num_wizards-1)
-            b = random.randint(0, num_wizards-1)
-            self.state[a], self.state[b] = self.state[b], self.state[a]
-        def energy(self):
-            return num_constraints-numSat(constraints,self.state)
-    init_state=wizards#find_best_rand(10000)
-    wp=WizardProblem(init_state)
-    auto_schedule=wp.auto(minutes=0.01,steps=100000)
-    wp.set_schedule(auto_schedule)
-    wp.copy_strategy="slice"
-    state,e= wp.anneal()
-    print(numSat(constraints,state))
-    return state
+    print("starting time")
+    start = time.time()
+    print("hello")
+    end = time.time()
+    print("time taken",end - start)
+    random.shuffle(wizards)
+    assignment = wizards
+    loop_counter = 0
+    temperature = 10.0
+    while not numSat(constraints, assignment) == len(constraints):
+        loop_counter += 1
+        if loop_counter % 500 == 0:
+            print("numSat", numSat(constraints, assignment))
+            print("loops",loop_counter)
+            print("time taken", time.time()-start)
+        a = random.sample([i for i in range(len(wizards))], 1)
+        b = random.sample([i for i in range(len(wizards))], 1)
+        new_assignment = swap(assignment, a[0], b[0])
+        delta = numSat(constraints, assignment) - numSat(constraints, new_assignment)
+        if delta < 0:
+            print("delta negative")
+            assignment = new_assignment
+        else: 
+            # print("sample greater than expo")
+            sample = random.uniform(0.0,1.0)
+            expo = np.exp(-1*float(delta) / temperature)
+            if sample < expo:
+                # print("sample less than expo")
+                assignment = new_assignment
+        temperature -= 0.2
+
+    print("Solved BITCH! numSat:", numSat(constraints, assignment))
+    return assignment
+
+def swap(array, a, b):
+    temp = array[a]
+    array[a] = array[b]
+    array[b] = temp
+    return array
+
 def numSat(constraints,output):
     satisfied=0
     for cond in constraints:
@@ -57,6 +82,13 @@ def inRange(cond,output):
      if subject in range(second,first):
          return True
     return False
+def satisfies_constraints(ordering, constraints):
+    for constraint in constraints:
+        first, second, third = ordering[constraint[0]], ordering[constraint[1]], ordering[constraint[2]]
+        if first == -1 or second == -1 or third == -1:
+            return True
+        else:
+            return not ((first < second and second < third) or (first > second and second > third))
 
 """
 ======================================================================
