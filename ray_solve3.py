@@ -3,6 +3,7 @@ import argparse
 import time
 import itertools
 import random
+from constraint import *
 
 """
 ======================================================================
@@ -23,47 +24,14 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     Output:
         An array of wizard names in the ordering your algorithm returns
     """
-    print("starting time")
-    start = time.time()
-    random.shuffle(wizards)
-    assignment = wizards
-    scores = {}
-    loop_counter = 0
-    prev_max = 0
-    while not numSat(constraints, assignment,0) == len(constraints):
-        print("numSat", numSat(constraints, assignment, num_constraints))
-        loop_counter += 1
-        if loop_counter % 10 == 0:
-            print("loops",loop_counter)
-            print("time taken", time.time()-start)
-        scores = {}
-        max_sat = 0
-        for i in range(len(wizards)):
-            for j in range(len(wizards)):
-                if (i != j) and (j,i) not in scores:
-                    temp = assignment[i]
-                    assignment[i] = assignment[j]
-                    assignment[j] = temp
-                    score = numSat(constraints,assignment,max_sat)
-                    scores[(i,j)] = score
-                    temp = assignment[i]
-                    assignment[i] = assignment[j]
-                    assignment[j] = temp
-                    if scores[(i,j)] > max_sat:
-                        max_sat = score
-
-        max_score_swap = max(scores, key=scores.get)
-        if max_score_swap == prev_max:
-            print("RESHUFFLING")
-            random.shuffle(assignment)
-        prev_max = max_score_swap
-        prev_score = scores[max_score_swap]
-        temp = assignment[max_score_swap[0]]
-        assignment[max_score_swap[0]] = assignment[max_score_swap[1]]
-        assignment[max_score_swap[1]] = temp
-    print("Solved BITCH! numSat:", numSat(constraints, assignment,num_constraints))
-    print("Time taken:",time.time()-start)
-    return assignment
+    problem=Problem()
+    for i in range(num_wizards):
+        problem.addVariable(wizards[i],[i for i in range(num_wizards)])
+    for i in range(num_constraints):
+        con=constraints[i]
+        problem.addConstraint(lambda first,second,subject: not(first<subject and subject<second or second<subject and subject<first ),(con[0],con[1],con[2]))
+    print(problem.getSolutions())
+    return wizards
 
 def unsatisfiedConstraints(constraints, output):
     unsatisfied = []
