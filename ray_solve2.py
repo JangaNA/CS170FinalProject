@@ -34,6 +34,8 @@ def solve(num_wizards, num_constraints, wizards, constraints):
     init_state=wizards#find_best_rand(10000)
     wp=WizardProblem(init_state)
     auto_schedule=wp.auto(minutes=0.01,steps=100000)
+    auto_schedule=wp.auto(minutes=0.1,steps=800000)
+    auto_schedule=wp.auto(minutes=.001,steps=30000)
     wp.set_schedule(auto_schedule)
     wp.copy_strategy="slice"
     state,e= wp.anneal()
